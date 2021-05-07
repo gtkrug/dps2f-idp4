@@ -9,7 +9,7 @@ Tested with Shibboleth Identity Provider 4.1.x and Google Chrome 57.x and Firefo
 
 ## Requirements
 * [Shibboleth Identity Provider 4.1.x](http://shibboleth.net/downloads/identity-provider/latest/)
-* Java 8
+* Java 11
 
 ## Build
 Build the library by executing **./gradlew clean installDist** from the project directory.  This will build 1 library 
@@ -19,7 +19,7 @@ There is a zipfile included in the repository that represents a build based on t
 
 ## Installation
 The contents of the **./build/install/dps-2f-code/** directory in general need to be copied to a deployed IDP 4.1, and 
-then added to the idp.war file by exuecting **[IDP_HOME]/bin/build.sh**.
+then added to the idp.war file by executing **[IDP_HOME]/bin/build.sh**.
 
 ## Configuration
 There are several configuration files that need to be added/updated based on the examples/distribution files for this package:
