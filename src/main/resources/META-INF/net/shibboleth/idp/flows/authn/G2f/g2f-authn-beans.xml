@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+       default-init-method="initialize" default-destroy-method="destroy">
+
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer" p:placeholderPrefix="%{"
+          p:placeholderSuffix="}" />
+
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+
+    <!-- Datastore beans -->
+    <alias name="%{g2f.dataStore}" alias="deviceDataStore" />
+
+    <bean id="MailServerDataStore"
+          class="org.gtri.shibboleth.idp.email.authn.impl.datastores.MailServerDataStore"
+          c:smtpServer="%{g2f.datastore.mailserver:#{null}}"
+          c:fromAddress="%{g2f.datastore.fromaddress:#{null}}"
+          c:emailTemplate="%{g2f.datastore.emailtemplate:#{null}}"
+          lazy-init="true"/>
+
+
+    <!-- U2F flow beans -->
+    <bean id="initialize2ndFactor"
+          scope="prototype"
+          class="org.gtri.shibboleth.idp.email.authn.impl.Initialize2ndFactor"
+          p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+
+    <bean id="validate2ndFactor"
+          scope="prototype"
+          class="org.gtri.shibboleth.idp.email.authn.impl.Validate2ndFactor"
+          p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+    </bean> 
+
+    <!-- Default username comes from previous c14n or session. -->
+    <bean id="org.gtri.shibboleth.idp.email.UsernameLookupStrategy"
+          class="net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrategy" />
+
+    <alias name="org.gtri.shibboleth.idp.email.UsernameLookupStrategy" alias="CanonicalUsernameStrategy" />
+
+</beans>
