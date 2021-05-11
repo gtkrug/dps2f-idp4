@@ -2,6 +2,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
 	parent="authn.abstract">
 
+
     <!-- Display G2F authentication view -->
     <view-state id="displayG2fForm" view="g2f">
         <on-entry>

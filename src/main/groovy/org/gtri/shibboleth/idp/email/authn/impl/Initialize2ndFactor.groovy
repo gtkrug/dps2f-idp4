@@ -17,7 +17,7 @@
 
 package org.gtri.shibboleth.idp.email.authn.impl
 
-import com.google.common.base.Function
+import java.util.function.Function
 import org.gtri.shibboleth.idp.email.authn.api.DeviceDataStore
 import groovy.util.logging.Slf4j
 import net.shibboleth.idp.authn.AbstractExtractionAction
