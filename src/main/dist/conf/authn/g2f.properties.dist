@@ -1,0 +1,19 @@
+####################
+# General settings #
+####################
+
+## G2F Application Facets ) for more information
+g2f.appId=https://idp.example.org
+
+
+## Data store configuration - available data stores are, dummyDataStore and yubicoU2fValidationDataStore
+## Uncomment one of the data stores and it's configuration properties, update the empty properties where needed.
+
+#################################
+# MailServer Config             #
+#################################
+g2f.dataStore=MailServerDataStore
+g2f.datastore.mailserver=relay1.gtri.gatech.edu
+g2f.datastore.fromaddress=nobody@nowhere.org
+g2f.datastore.emailtemplate=/opt/idp3/conf/email.txt
+
