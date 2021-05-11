@@ -1,5 +1,7 @@
 #set ($errorMessage = $authenticationContext.getSubcontext('org.gtri.shibboleth.idp.email.authn.impl.G2fUserContext').getErrorMessage())
 #set ($emailAddress = $authenticationContext.getSubcontext('org.gtri.shibboleth.idp.email.authn.impl.G2fUserContext').email)
+#set ($rpContext = $profileRequestContext.getSubcontext('net.shibboleth.idp.profile.context.RelyingPartyContext'))
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -32,10 +34,28 @@
                 :
                 </p>
                 <form id="u2f_form" action="$flowExecutionUrl" method="POST">
+                    #parse("csrf/csrf.vm")
+                    #set ($serviceName = $rpUIContext.serviceName)
+                    #if ($serviceName && !$rpContext.getRelyingPartyId().contains($serviceName))
+                      <legend>
+                        #springMessageText("idp.login.loginTo", "Login to") $encoder.encodeForHTML($serviceName)
+                      </legend>
+                    #end
+
+                    <div class="form-element-wrapper">
+                      <label for="code">#springMessageText("idp.totp.field", "Token Code")</label>
+                      <input class="form-element form-field" id="code" name="code" type="text" value="" />
+                    </div>
+
                     <input type="hidden" name="_eventId" value="proceed"/> <br>
-                    <input type="text" name="code" id="code"/> <br>
-                    <input type="submit" name="submit"/>
-                </form>
+
+                    <div class="form-element-wrapper">
+                       <button class="form-element form-button" type="submit" name="_eventId_proceed"
+                          onClick="this.childNodes[0].nodeValue='#springMessageText("idp.login.pleasewait", "Logging in, please wait...")'"
+                         >#springMessageText("idp.login.login", "Login")</button>
+                    </div>
+                  </form>
+
             </div>
         </div>
     </div>

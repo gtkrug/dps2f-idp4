@@ -59,7 +59,7 @@ class G2fUserContext extends BaseContext {
      */
 
     def getErrorMessage() {
-        log.debug ("g2fUserContext.state = {}", state)
+        log.debug ("g2fUserContext.state = {} username = {} email = {}", state, username, email)
         return state
     }
 }
