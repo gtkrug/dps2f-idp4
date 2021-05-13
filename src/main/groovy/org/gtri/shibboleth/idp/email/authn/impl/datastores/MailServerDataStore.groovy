@@ -123,8 +123,7 @@ class MailServerDataStore implements DeviceDataStore {
         message.setFrom(new InternetAddress(Address));
 
         // Set To: header field of the header.
-        message.addRecipient(Message.RecipientType.TO,
-                                    new InternetAddress(EmailAddress));
+        message.setRecipients(Message.RecipientType.TO,EmailAddress);
 
         // Set Subject: header field
         message.setSubject("One-Time Login Token");
