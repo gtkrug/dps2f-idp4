@@ -70,30 +70,39 @@
                     username = input.getSubcontext("net.shibboleth.idp.authn.context.SubjectCanonicalizationContext").getPrincipalName();
                     resCtx.setPrincipal(username);
                     resCtx.getRequestedIdPAttributeNames().add("Email");
+                    resCtx.getRequestedIdPAttributeNames().add("TextAddress");
                     resCtx.getRequestedIdPAttributeNames().add("UserLocation");
                     resCtx.resolveAttributes(custom);
                     userCtx = input.getSubcontext("org.gtri.shibboleth.idp.email.authn.impl.G2fUserContext", true);
 
                     // Check for an attribute that authorizes use of first factor.
                     emailAttr = resCtx.getResolvedIdPAttributes().get("Email");
+                    textAttr  = resCtx.getResolvedIdPAttributes().get("TextAddress");
                     userLoc   = resCtx.getResolvedIdPAttributes().get("UserLocation");
                     valueType =  Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
                     if (userLoc != null) {
-                        logger.debug ("User Location alue {}", userLoc.getValues().get(0))
+                        logger.debug ("User Location value {}", userLoc.getValues().get(0))
                         if (userLoc.getValues().contains(new valueType("Internal"))) {
                           nextFlow = null;
                         }
                         else {
                           nextFlow = "authn/G2f";
                           email = emailAttr.getValues().get(0).getValue();
-                          logger.debug ("Check 2nd Factor - Email Address {}", email);
+                          text  = null;
+                          if (textAttr != null ) {
+                             text  = textAttr.getValues().get(0).getValue();
+                             logger.debug ("Check 2nd Factor - Email Address {} and Text Address {}", email, text);
+                          } else {
+                             logger.debug ("Check 2nd Factor - Only sending to Email Address {}", email);
+                          }
                           userCtx.setEmail(email);
+                          userCtx.setTextAddress(text);
                           userCtx.setUsername(username);
                           authCtx.addSubcontext (userCtx);
                         }
                     }
                     else {
-                        logger.debug ("Error resolving email and location attributes"); 
+                        logger.debug ("Error resolving email and/or location attributes"); 
                     }
                     
                     input.removeSubcontext(resCtx);   // cleanup

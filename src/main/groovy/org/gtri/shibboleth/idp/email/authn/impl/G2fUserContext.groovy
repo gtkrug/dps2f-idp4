@@ -25,6 +25,7 @@ class G2fUserContext extends BaseContext {
     def appId
     def username
     def email
+    def text
     def key
     def state
     def tokenResponse
@@ -51,6 +52,14 @@ class G2fUserContext extends BaseContext {
         email = userEmail;
     }
 
+    def getTextAddress() {
+        return text
+    }
+
+    def setTextAddress(String textAddr) {
+        text = textAddr
+    }
+
 
     /**
      * Get current error and display it to the user.
@@ -59,7 +68,7 @@ class G2fUserContext extends BaseContext {
      */
 
     def getErrorMessage() {
-        log.debug ("g2fUserContext.state = {} username = {} email = {}", state, username, email)
+        log.debug ("g2fUserContext.state = {} username = {} email = {} text = {}", state, username, email, text)
         return state
     }
 }

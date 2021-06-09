@@ -24,6 +24,7 @@
           c:smtpServer="%{g2f.datastore.mailserver:#{null}}"
           c:fromAddress="%{g2f.datastore.fromaddress:#{null}}"
           c:emailTemplate="%{g2f.datastore.emailtemplate:#{null}}"
+          c:textTemplate="%{g2f.datastore.texttemplate:#{null}}"
           lazy-init="true"/>
 
 

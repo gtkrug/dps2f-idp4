@@ -77,8 +77,12 @@ public class Initialize2ndFactor extends AbstractExtractionAction {
             log.warn("No principal name available to cross-check G2F result")
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS)
             return false
-        } 
-        log.debug ("Initailzie Pre-execute: g2fUserContext Initialized with email = {}", g2fUserContext.email);
+        }
+        if ( g2fUserContext.text == null ) { 
+           log.debug ("Initailzie Pre-execute: g2fUserContext Initialized with email = {}", g2fUserContext.email);
+        } else {
+           log.debug ("Initailzie Pre-execute: g2fUserContext Initialized with email = {} and text = {}", g2fUserContext.email, g2fUserContext.text);
+        }
         return true
     }
 
@@ -109,7 +113,7 @@ public class Initialize2ndFactor extends AbstractExtractionAction {
                 ActionSupport.buildEvent(profileRequestContext, (String) state)
             }
         } catch (Exception errMail) {
-            log.error("Exception when attempting to send 2nd factor: {}", errMail.toString() );
+            log.error("Exception when attempting to send 2nd factor: {}", errMail );
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX)
         }
     }

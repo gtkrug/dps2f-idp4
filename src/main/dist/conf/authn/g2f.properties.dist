@@ -15,5 +15,6 @@ g2f.appId=https://idp.example.org
 g2f.dataStore=MailServerDataStore
 g2f.datastore.mailserver=relay1.gtri.gatech.edu
 g2f.datastore.fromaddress=nobody@nowhere.org
-g2f.datastore.emailtemplate=/opt/idp3/conf/email.txt
+g2f.datastore.emailtemplate=/opt/idp4/conf/email.txt
+g2f.datastore.texttemplate=/opt/idp4/conf/email.txt
 

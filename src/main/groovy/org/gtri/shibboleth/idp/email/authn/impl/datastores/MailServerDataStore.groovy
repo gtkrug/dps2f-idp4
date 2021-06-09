@@ -30,6 +30,10 @@ import java.util.*
 import javax.mail.*
 import javax.mail.internet.*
 
+// For files
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 // Mailserver Stuff
 // TBD
 
@@ -39,18 +43,20 @@ class MailServerDataStore implements DeviceDataStore {
     private String Server
     private String Address
     private String EmailTemplate
+    private String TextTemplate
     
     // TBD - Private Data Neccessary for Connection to SMTP Server
 
     /** Constructor */
-    MailServerDataStore(String smtpServer, String fromAddress, String emailTemplate) {
+    MailServerDataStore(String smtpServer, String fromAddress, String emailTemplate, String textTemplate) {
         log.debug("Mail Server constructor: ({})", smtpServer);
         try {
             Server  = smtpServer;
             Address = fromAddress;
-            EmailTemplate = new File (emailTemplate).text
+            EmailTemplate = Files.readString(Path.of(emailTemplate));
+            TextTemplate  = Files.readString(Path.of(textTemplate));
         } catch (Exception ex) {
-           log.error("Failed to load email template from file {}; Exception: {}", emailTemplate, ex);
+           log.error("Failed to load email or text template from file;  Exception: {}",  ex.toString() );
         }
 
     }
@@ -60,14 +66,27 @@ class MailServerDataStore implements DeviceDataStore {
         def username  = g2fUserContext.username
         def token     = g2fUserContext.token
         def email     = g2fUserContext.email
+        def textaddr  = g2fUserContext.text
+
         log.debug("Send e-mail to e-mail address {} for user {} with token {}", email, username, token)
         try {
             log.debug("beginAuthentication() - Transmitting 2nd factor to user via e-mail");
-            sendEmail (email, token);
+            sendEmail (email, token, EmailTemplate);
         } catch (Exception e) {
             log.error("E-mail Transmission error: {}", e.toString());
             return false
         }
+        if ( textaddr != null ) {
+          log.debug("Send e-mail to text address {} for user {} with token {}", textaddr, username, token)
+           try {
+               log.debug("beginAuthentication() - Transmitting 2nd factor to user via e-mail");
+               sendEmail (textaddr, token, TextTemplate);
+            } catch (Exception e) {
+               log.error("E-mail Transmission error: {}", e.toString());
+               return false
+            }
+         }
+
         return true
     }
 
@@ -100,14 +119,14 @@ class MailServerDataStore implements DeviceDataStore {
        }
     }
 
-    private void sendEmail (String EmailAddress, int Token) throws MessagingException {
+    private void sendEmail (String EmailAddress, int Token, String Message) throws MessagingException {
 
 
 
         Properties properties = System.getProperties();
 
         Integer token  = new Integer(Token);
-        String msgText = EmailTemplate.replaceAll ("TOKEN", token.toString());
+        String msgText = Message.replaceAll ("TOKEN", token.toString());
 
         // Setup mail server
         properties.setProperty("mail.smtp.host", Server);
@@ -134,24 +153,9 @@ class MailServerDataStore implements DeviceDataStore {
 	message.setContent(msgText, "text/html; charset=utf-8");
 
         // Send message
-//        try {
-          log.debug ("Trying to send email to ({}) with server ({}) from ({})", EmailAddress, Server, Address);
+        log.debug ("Trying to send email to ({}) with server ({}) from ({})", EmailAddress, Server, Address);
 
-          Transport.send(message);
-/*
-        } catch (SendFailedException e) {
-            sent   = e.getValidSentAddresses();
-            valid  = e.getValidUnsentAddresses();
-            failed = e.getInvalidAddresses();
-
-            if (valid != null) {
-              log.error ("Valid Email Address Found, but message unsent {} \n", valid[0].toString());
-            }
-            if (failed != null) {
-              log.error ("Invalid Email Address Found: {} \n", failed[0].toString());
-            }
-        }
-*/
+        Transport.send(message);
 
         log.debug ("Successfully e-mailed {} one time token to {}", EmailAddress);
    }
