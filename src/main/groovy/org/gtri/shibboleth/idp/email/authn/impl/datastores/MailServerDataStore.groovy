@@ -62,10 +62,10 @@ class MailServerDataStore implements DeviceDataStore {
         def email     = g2fUserContext.email
         log.debug("Send e-mail to e-mail address {} for user {} with token {}", email, username, token)
         try {
-            log.debug("beginAuthentication() - Transmitting 2nd factor to user via e-mail")
+            log.debug("beginAuthentication() - Transmitting 2nd factor to user via e-mail");
             sendEmail (email, token);
-        } catch (MessagingException e) {
-            log.error("E-mail Transmission error: {}", e.toSring())
+        } catch (Exception e) {
+            log.error("E-mail Transmission error: {}", e.toString());
             return false
         }
         return true
@@ -103,7 +103,6 @@ class MailServerDataStore implements DeviceDataStore {
     private void sendEmail (String EmailAddress, int Token) throws MessagingException {
 
 
-        log.debug ("Trying to send email to ({}) with server ({}) from ({})", EmailAddress, Server, Address);
 
         Properties properties = System.getProperties();
 
@@ -135,7 +134,24 @@ class MailServerDataStore implements DeviceDataStore {
 	message.setContent(msgText, "text/html; charset=utf-8");
 
         // Send message
-        Transport.send(message);
+//        try {
+          log.debug ("Trying to send email to ({}) with server ({}) from ({})", EmailAddress, Server, Address);
+
+          Transport.send(message);
+/*
+        } catch (SendFailedException e) {
+            sent   = e.getValidSentAddresses();
+            valid  = e.getValidUnsentAddresses();
+            failed = e.getInvalidAddresses();
+
+            if (valid != null) {
+              log.error ("Valid Email Address Found, but message unsent {} \n", valid[0].toString());
+            }
+            if (failed != null) {
+              log.error ("Invalid Email Address Found: {} \n", failed[0].toString());
+            }
+        }
+*/
 
         log.debug ("Successfully e-mailed {} one time token to {}", EmailAddress);
    }

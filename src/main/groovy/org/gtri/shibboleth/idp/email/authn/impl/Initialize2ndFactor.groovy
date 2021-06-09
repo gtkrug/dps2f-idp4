@@ -74,7 +74,7 @@ public class Initialize2ndFactor extends AbstractExtractionAction {
         g2fUserContext = authenticationContext.getSubcontext(G2fUserContext.class, true)
         username = usernameLookupStrategy.apply(profileRequestContext)
         if (!username) {
-            log.warn("{} No principal name available to cross-check G2F result", getLogPrefix())
+            log.warn("No principal name available to cross-check G2F result")
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS)
             return false
         } 
@@ -88,7 +88,7 @@ public class Initialize2ndFactor extends AbstractExtractionAction {
         log.debug("${logPrefix} Entering doExecute")
 
         try {
-            log.debug("{} Principal name {}", getLogPrefix(), username)
+            log.debug("Principal name {}", username)
 
             if (!g2fUserContext.initialized) {
                 log.info ("User Context for {} was not marked as initialized. ", username);
@@ -108,8 +108,8 @@ public class Initialize2ndFactor extends AbstractExtractionAction {
                 g2fUserContext.state = ""
                 ActionSupport.buildEvent(profileRequestContext, (String) state)
             }
-        } catch (Exception e) {
-            log.warn("{} Error in doExecute", getLogPrefix(), e)
+        } catch (Exception errMail) {
+            log.error("Exception when attempting to send 2nd factor: {}", errMail.toString() );
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX)
         }
     }
