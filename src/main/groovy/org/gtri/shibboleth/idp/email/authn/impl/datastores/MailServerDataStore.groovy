@@ -71,7 +71,7 @@ class MailServerDataStore implements DeviceDataStore {
         log.debug("Send e-mail to e-mail address {} for user {} with token {}", email, username, token)
         try {
             log.debug("beginAuthentication() - Transmitting 2nd factor to user via e-mail");
-            sendEmail (email, token, EmailTemplate);
+            sendEmail (email, token, EmailTemplate, new String("Texas DPS Login: One Time Pin"));
         } catch (Exception e) {
             log.error("E-mail Transmission error: {}", e.toString());
             return false
@@ -80,7 +80,7 @@ class MailServerDataStore implements DeviceDataStore {
           log.debug("Send e-mail to text address {} for user {} with token {}", textaddr, username, token)
            try {
                log.debug("beginAuthentication() - Transmitting 2nd factor to user via e-mail");
-               sendEmail (textaddr, token, TextTemplate);
+               sendEmail (textaddr, token, TextTemplate, new String(""));
             } catch (Exception e) {
                log.error("E-mail Transmission error: {}", e.toString());
                return false
@@ -119,7 +119,7 @@ class MailServerDataStore implements DeviceDataStore {
        }
     }
 
-    private void sendEmail (String EmailAddress, int Token, String Message) throws MessagingException {
+    private void sendEmail (String EmailAddress, int Token, String Message, String Subject) throws MessagingException {
 
 
 
@@ -144,8 +144,9 @@ class MailServerDataStore implements DeviceDataStore {
         message.setRecipients(Message.RecipientType.TO,EmailAddress);
 
         // Set Subject: header field
-        message.setSubject("One-Time Login Token");
-
+        if (! Subject.isEmpty() ) {
+          message.setSubject(Subject);
+        }
 
         // Now set the actual message
         //message.setText(msgText);
